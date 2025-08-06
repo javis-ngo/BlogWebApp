@@ -8,4 +8,4 @@ class Blog_Posts():
     date_posted = Column(DateTime, nullable=False, default= datetime.time())
     title = Column(String(200), nullable=False)
     body = Column(Text, nullable=False)
-    picture = Column(String(255), nullable=True, default="")
+    picture = Column(Text, nullable=True, default="")

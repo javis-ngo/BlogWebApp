@@ -6,7 +6,7 @@ import datetime
 from flask_login import UserMixin
 
 class Blog_User(UserMixin):
-    __tablename__ = 'user'
+    __tablename__ = 'blog_user'
     id = Column(Integer, primary_key=True)
     username = Column(String(200), unique=True, nullable=False)
     email = Column(String(200), unique=True, nullable=False)
