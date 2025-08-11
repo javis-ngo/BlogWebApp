@@ -1,27 +1,26 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy.orm import relationship
-
 import datetime
 
-from flask_login import UserMixin
+class User:
+    def __init__(self, username: str, email: str, about: str, status: bool, admin_notes: str = "",
+                 avatar: str = ""):
+        self.username = username
+        self.email = email
+        self.about = about
+        self.status = status
+        self.admin_notes = admin_notes
+        self.avatar = avatar
 
-class Blog_User(UserMixin):
-    __tablename__ = 'blog_user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String(200), unique=True, nullable=False)
-    email = Column(String(200), unique=True, nullable=False)
-    password = Column(String(200), nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.time())
-    updated_at = Column(DateTime, nullable=False, default=datetime.time())
-    about = Column(String(255), nullable=True, default="")
-    picture = Column(String(255), nullable=True, default="")
-    type = Column(String(255), nullable=True, default="")
-    admin_notes = Column(Text, nullable=True, default="")
-    posts = relationship('Blog_Post', backref='user', lazy=True)
-    comments = relationship('Blog_Comment', backref='user', lazy=True)
-    replies = relationship('Blog_Reply', backref='user', lazy=True)
-    likes = relationship('Blog_Like', backref='user', lazy=True)
-    bookmarks = relationship('Blog_Bookmark', backref='user', lazy=True)
-
-    def __repr__(self):
-        return f"<User: {self.id} {self.name} {self.email}>"
+    def to_dynamodb_item(self):
+        return {
+            'PK': f'USER#{self.email}',
+            'SK': 'METADATA',
+            'data': {
+                'username': self.username,
+                'email': self.email,
+                'about': self.about,
+                'status': self.status,
+                'admin_notes': self.admin_notes,
+                'avatar': self.avatar,
+            },
+            'created_at': datetime.time().isoformat()
+        }
