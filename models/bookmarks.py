@@ -12,3 +12,16 @@ class Blog_Bookmark():
 
     def __repr__(self):
         return f"<Bookmark>"
+
+class Bookmark:
+    def __init__(self, user, post_id):
+        self.user = user
+        self.post_id = post_id
+
+    def to_dynamodb_item(self):
+        return {
+            'PK': f'USER#{self.user}',
+            'SK': f'BOOKMARK#{self.post_id}',
+            'post_id': self.post_id,
+            'created_at': datetime.time(),
+        }
