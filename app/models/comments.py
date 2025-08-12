@@ -1,11 +1,13 @@
 import datetime
 
-class Comment:
-    def __init__(self, comment_id: str, user: str, post_id: int, text: str):
-        self.comment_id = comment_id
-        self.user = user
-        self.post_id = post_id
-        self.text = text
+from pydantic import BaseModel
+
+
+class Comment(BaseModel):
+    comment_id: str
+    user: str
+    post_id: int
+    text: str
 
     def to_dynamodb_item(self):
         return {
