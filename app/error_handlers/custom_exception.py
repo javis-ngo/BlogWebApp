@@ -5,9 +5,6 @@ import logging
 from app.error_handlers.custom_api_error import CustomAPIError
 
 def handle_custom_api_error(error: CustomAPIError):
-    # logger.error(
-    #     f"Custom API Error: {error.message} (Code: {error.error_code}, Status: {error.status_code})"
-    # )
     response = jsonify({
         "error": error.message,
         "error_code": error.error_code
@@ -76,7 +73,6 @@ def register_error_handlers(app):
     app.register_error_handler(ValidationError, handle_validation_error)
     app.register_error_handler(Exception, handle_exception)
 
-    # HTTP status codes
     app.register_error_handler(400, handle_400_error)
     app.register_error_handler(404, handle_404_error)
     app.register_error_handler(405, handle_405_error)

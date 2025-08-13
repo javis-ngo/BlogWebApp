@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, constr
 
 
 class SignupRequestDto(BaseModel):
     username: str
-    email: str
-    password: str
+    email: EmailStr
+    password: constr(min_length=6)
     about: str
     avatar: str
