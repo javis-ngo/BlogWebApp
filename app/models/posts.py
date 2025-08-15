@@ -1,15 +1,18 @@
 import datetime
+import uuid
 
 from pydantic import BaseModel
 
 
 class Post(BaseModel):
-    post_id: str
+    post_id: str = uuid.uuid4().hex
     title: str
     body: str
-    author: str
+    images: list[str] = []
+    author: str = ""
     category: str
-    tags: list[str]
+    tags: list
+    date_posted: int
 
     def to_dynamodb_item(self):
         return {
@@ -17,16 +20,18 @@ class Post(BaseModel):
             'SK': 'METADATA',
             'data': {
                 'title': self.title,
-                'body': self.body
+                'body': self.body,
+                'images': self.images,
             },
             'category': self.category,
             'tags': self.tags,
-            'date_posted': datetime.datetime,
+            'date_posted': self.date_posted,
             'author': self.author,
             'GSI1PK': f'CATEGORY#{self.category}',
-            'GSI1SK': f'POST#{datetime.datetime}',
+            'GSI1SK': f'POST#{self.date_posted}',
             'GSI3PK': f'USER#{self.author}',
         }
+
     def to_tag_items(self):
         return [
             {

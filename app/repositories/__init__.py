@@ -10,5 +10,11 @@ dynamodb_resource = boto3.resource(
         endpoint_url=endpoint_url
     )
 
-table = dynamodb_resource.Table('BlogWebApp')
+s3_client = boto3.client(
+    's3',
+    region_name=region_name,
+    endpoint_url=endpoint_url,
+)
+
+dynamodb_table = dynamodb_resource.Table('BlogWebApp')
 

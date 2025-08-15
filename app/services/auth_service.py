@@ -1,6 +1,7 @@
+from gcloud.exceptions import ClientError
 from pydantic import ValidationError
 
-from app.dto.auth_response_dto import AuthResponseDto
+from app.dto.response.auth_response_dto import AuthResponseDto
 from app.error_handlers.custom_api_error import CustomAPIError
 from app.models.user import User
 from app.repositories import user_repository
@@ -20,6 +21,8 @@ def sign_up(signup_request_dto):
         result = AuthResponseDto(**user_response)
     except ValidationError as e:
         raise CustomAPIError(e, 400)
+    except ClientError as e:
+        raise CustomAPIError("Client Error", 400)
     except CustomAPIError as e:
         raise CustomAPIError(e.message, e.status_code)
     except Exception as e:
@@ -27,7 +30,6 @@ def sign_up(signup_request_dto):
     return result.model_dump()
 
 def sign_in(auth_request_dto):
-
     try:
         if user_repository.get_user_by_email(auth_request_dto["email"]):
             hashed_password = hash_password(auth_request_dto["password"])
@@ -37,5 +39,28 @@ def sign_in(auth_request_dto):
             raise CustomAPIError("User not found", 400)
     except CustomAPIError as e:
         raise CustomAPIError(e, e.status_code)
+    except Exception as e:
+        raise CustomAPIError(e, 500)
+
+def get_account_info(request):
+    auth_header = request.headers.get('Authorization')
+
+    if not auth_header:
+        raise CustomAPIError("No authorization header", 400)
+
+    if not auth_header.startswith('Bearer '):
+        raise CustomAPIError("Invalid Authorization header", 401)
+
+    id_token = auth_header[7:]
+
+    try:
+        user_info = auth.get_account_info(id_token)
+        return user_info
+    except auth.InvalidIdTokenError:
+        raise CustomAPIError("Invalid ID Token", 401)
+    except auth.ExpiredIdTokenError:
+        raise CustomAPIError("Expired ID Token", 401)
+    except auth.AuthError as e:
+        raise CustomAPIError(e.message, e.status_code)
     except Exception as e:
         raise CustomAPIError(e, 500)

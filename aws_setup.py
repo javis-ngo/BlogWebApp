@@ -24,6 +24,7 @@ def create_aws_instances():
     try:
         bucket_name = os.getenv('BUCKET_NAME')
         s3_client.create_bucket(Bucket=bucket_name)
+
         dynamodb_client.create_table(
             TableName='BlogWebApp',
             KeySchema=[
