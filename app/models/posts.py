@@ -1,13 +1,15 @@
 import datetime
 
-class Post:
-    def __init__(self, post_id: str, title: str, body: str, author: str, category: str, tags: list[str]):
-        self.post_id = post_id
-        self.title = title
-        self.body = body
-        self.author = author
-        self.category = category
-        self.tags = tags
+from pydantic import BaseModel
+
+
+class Post(BaseModel):
+    post_id: str
+    title: str
+    body: str
+    author: str
+    category: str
+    tags: list[str]
 
     def to_dynamodb_item(self):
         return {
