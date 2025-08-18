@@ -21,5 +21,5 @@ def signin():
 
 @controller.route('/get-account', methods=['POST'])
 def get_account():
-    result = auth_service.get_account_info(request)
+    result = auth_service.validate_token(request)
     return result, 200

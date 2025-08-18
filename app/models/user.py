@@ -24,3 +24,8 @@ class User(BaseModel):
             },
             'created_at': datetime.time().isoformat()
         }
+
+    def from_request_json(self, request_json):
+        self.username = request_json['username']
+        self.about = request_json['about']
+        self.avatar = request_json['avatar']
