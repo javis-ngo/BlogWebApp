@@ -16,7 +16,7 @@ def create_post(request):
         raise CustomAPIError('No post data', 400)
     try:
         post_form = PostCreateRequestDTO.model_validate_json(request.form.get('post_data'))
-        account_info = auth_service.get_account_info(request)
+        account_info = auth_service.validate_token(request)
         email_author = account_info['users'][0]['email']
     except CustomAPIError as e:
         raise CustomAPIError(e, e.status_code)

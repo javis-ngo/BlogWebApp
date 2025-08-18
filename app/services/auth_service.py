@@ -1,5 +1,6 @@
 from gcloud.exceptions import ClientError
 from pydantic import ValidationError
+from requests import HTTPError
 
 from app.dto.response.auth_response_dto import AuthResponseDto
 from app.error_handlers.custom_api_error import CustomAPIError
@@ -42,7 +43,7 @@ def sign_in(auth_request_dto):
     except Exception as e:
         raise CustomAPIError(e, 500)
 
-def get_account_info(request):
+def validate_token(request):
     auth_header = request.headers.get('Authorization')
 
     if not auth_header:
@@ -56,11 +57,8 @@ def get_account_info(request):
     try:
         user_info = auth.get_account_info(id_token)
         return user_info
-    except auth.InvalidIdTokenError:
-        raise CustomAPIError("Invalid ID Token", 401)
-    except auth.ExpiredIdTokenError:
-        raise CustomAPIError("Expired ID Token", 401)
-    except auth.AuthError as e:
-        raise CustomAPIError(e.message, e.status_code)
+    except HTTPError:
+        raise CustomAPIError("Invalid Token", 401)
     except Exception as e:
         raise CustomAPIError(e, 500)
+
